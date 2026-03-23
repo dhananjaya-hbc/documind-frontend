@@ -1,3 +1,18 @@
+// src/app/app.routes.ts
+
 import { Routes } from '@angular/router';
 
-export const routes: Routes = [];
+import { LandingComponent } from './pages/landing/landing';
+import { LoginComponent } from './pages/login/login';
+import { RegisterComponent } from './pages/register/register';
+import { DocumentsComponent } from './pages/documents/documents';
+import { ChatComponent } from './pages/chat/chat';
+
+export const routes: Routes = [
+  { path: '', component: LandingComponent },
+  { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
+  { path: 'documents', component: DocumentsComponent },
+  { path: 'chat/:id', component: ChatComponent },
+  { path: '**', redirectTo: '' },  // Any unknown URL → go to landing
+];
