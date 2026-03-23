@@ -1,1 +1,24 @@
-/* You can add global styles to this file, and also import other style files */
+/* src/styles.css */
+
+/* Import Tailwind's base styles */
+@import "tailwindcss";
+
+/* ============================================
+   CUSTOM GLOBAL STYLES
+   ============================================ */
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Better default font */
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    Roboto, Oxygen, Ubuntu, sans-serif;
+}
+
+/* Remove default button outline */
+button:focus {
+  outline: none;
+}
