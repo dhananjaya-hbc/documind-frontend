@@ -7,13 +7,13 @@ import { Component } from '@angular/core';
   standalone: true,
   imports: [],
   template: `
-    <!-- Full screen centered layout -->
+    <!-- Full screen layout -->
     <div class="min-h-screen bg-gradient-to-br from-indigo-50 to-blue-100">
 
       <!-- Navigation Bar -->
       <nav class="bg-white shadow-sm border-b border-gray-200">
         <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-          <h1 class="text-2xl font-bold text-indigo-600">🧠 DocuMind</h1>
+          <h1 class="text-3xl font-bold text-indigo-600">DocuMind</h1>
           <div class="flex gap-2">
             <button class="px-4 py-2 text-sm text-gray-600 hover:text-indigo-600 transition">
               Login
@@ -86,8 +86,22 @@ import { Component } from '@angular/core';
         </div>
       </div>
 
+      <!-- Tech Stack Section -->
+      <div class="max-w-4xl mx-auto px-4 py-12 text-center">
+        <h3 class="text-2xl font-bold text-gray-900 mb-8">Built With</h3>
+        <div class="flex flex-wrap justify-center gap-4">
+          <span class="px-4 py-2 bg-white rounded-full text-sm font-medium text-gray-700 shadow-sm">Angular</span>
+          <span class="px-4 py-2 bg-white rounded-full text-sm font-medium text-gray-700 shadow-sm">FastAPI</span>
+          <span class="px-4 py-2 bg-white rounded-full text-sm font-medium text-gray-700 shadow-sm">PostgreSQL</span>
+          <span class="px-4 py-2 bg-white rounded-full text-sm font-medium text-gray-700 shadow-sm">ChromaDB</span>
+          <span class="px-4 py-2 bg-white rounded-full text-sm font-medium text-gray-700 shadow-sm">Docker</span>
+          <span class="px-4 py-2 bg-white rounded-full text-sm font-medium text-gray-700 shadow-sm">RAG</span>
+          <span class="px-4 py-2 bg-white rounded-full text-sm font-medium text-gray-700 shadow-sm">Tailwind CSS</span>
+        </div>
+      </div>
+
       <!-- Footer -->
-      <footer class="bg-white border-t border-gray-200 py-6 mt-20">
+      <footer class="bg-white border-t border-gray-200 py-6 mt-10">
         <p class="text-center text-gray-500 text-sm">
           Built with Angular + FastAPI + RAG | © 2026 DocuMind
         </p>
