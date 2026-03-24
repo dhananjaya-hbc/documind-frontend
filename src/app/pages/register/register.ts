@@ -4,6 +4,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';    // ← REAL service
 
 @Component({
   selector: 'app-register',
@@ -51,7 +52,7 @@ import { RouterLink, Router } from '@angular/router';
               type="email"
               [(ngModel)]="email"
               name="email"
-              placeholder="john@example.com"
+              placeholder="john&#64;example.com"
               class="w-full px-4 py-3 border border-gray-300 rounded-lg
                      focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500
                      outline-none transition"
@@ -97,35 +98,35 @@ import { RouterLink, Router } from '@angular/router';
   styles: []
 })
 export class RegisterComponent {
-  username: string = '';
-  email: string = '';
-  password: string = '';
-  errorMessage: string = '';
-  successMessage: string = '';
-  isLoading: boolean = false;
+  username = '';
+  email = '';
+  password = '';
+  errorMessage = '';
+  successMessage = '';
+  isLoading = false;
 
-  constructor(private router: Router) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
   onRegister(): void {
     this.errorMessage = '';
     this.successMessage = '';
     this.isLoading = true;
 
-    // For now, fake register (we'll connect to API later)
-    setTimeout(() => {
-      if (this.username && this.email && this.password) {
-        if (this.password.length < 6) {
-          this.errorMessage = 'Password must be at least 6 characters.';
-        } else {
-          this.successMessage = 'Account created! Redirecting to login...';
-          setTimeout(() => {
-            this.router.navigate(['/login']);
-          }, 1500);
-        }
-      } else {
-        this.errorMessage = 'Please fill in all fields.';
+    // ✅ REAL API CALL (replaces the old setTimeout fake)
+    this.authService.register({
+      email: this.email,
+      username: this.username,
+      password: this.password,
+    }).subscribe({
+      next: () => {
+        this.successMessage = 'Account created! Redirecting to login...';
+        this.isLoading = false;
+        setTimeout(() => this.router.navigate(['/login']), 1500);
+      },
+      error: (err) => {
+        this.errorMessage = err.error?.detail || 'Registration failed. Please try again.';
+        this.isLoading = false;
       }
-      this.isLoading = false;
-    }, 1000);
+    });
   }
 }

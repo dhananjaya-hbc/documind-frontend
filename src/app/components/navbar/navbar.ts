@@ -3,6 +3,7 @@
 import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../services/auth.service';     // ← REAL service
 
 @Component({
   selector: 'app-navbar',
@@ -20,8 +21,24 @@ import { CommonModule } from '@angular/common';
         <!-- Desktop Navigation -->
         <div class="hidden md:flex items-center gap-4">
 
-          <!-- Show when NOT logged in -->
-          <ng-container *ngIf="!isLoggedIn">
+          <!-- ✅ REACTIVE: subscribes to auth state using async pipe -->
+          <ng-container *ngIf="currentUser$ | async as user; else desktopLoggedOut">
+            <a routerLink="/documents"
+               routerLinkActive="text-indigo-600 font-semibold"
+               class="px-4 py-2 text-sm text-gray-600 hover:text-indigo-600 transition no-underline">
+              📄 Documents
+            </a>
+            <span class="text-sm text-gray-500">
+              👤 {{ user.username }}
+            </span>
+            <button
+              (click)="logout()"
+              class="px-4 py-2 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition">
+              Logout
+            </button>
+          </ng-container>
+
+          <ng-template #desktopLoggedOut>
             <a routerLink="/login"
                routerLinkActive="text-indigo-600"
                class="px-4 py-2 text-sm text-gray-600 hover:text-indigo-600 transition no-underline">
@@ -31,30 +48,12 @@ import { CommonModule } from '@angular/common';
                class="px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition no-underline">
               Sign Up
             </a>
-          </ng-container>
-
-          <!-- Show when logged in -->
-          <ng-container *ngIf="isLoggedIn">
-            <a routerLink="/documents"
-               routerLinkActive="text-indigo-600 font-semibold"
-               class="px-4 py-2 text-sm text-gray-600 hover:text-indigo-600 transition no-underline">
-              📄 Documents
-            </a>
-            <span class="text-sm text-gray-500">
-              👤 {{ username }}
-            </span>
-            <button
-              (click)="logout()"
-              class="px-4 py-2 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition">
-              Logout
-            </button>
-          </ng-container>
-
+          </ng-template>
         </div>
 
         <!-- Mobile Menu Button -->
         <button
-          (click)="toggleMobileMenu()"
+          (click)="mobileMenuOpen = !mobileMenuOpen"
           class="md:hidden p-2 text-gray-600 hover:text-indigo-600">
           <span class="text-2xl">{{ mobileMenuOpen ? '✕' : '☰' }}</span>
         </button>
@@ -64,7 +63,21 @@ import { CommonModule } from '@angular/common';
       <!-- Mobile Menu -->
       <div *ngIf="mobileMenuOpen" class="md:hidden bg-white border-t border-gray-100 px-4 py-4">
 
-        <ng-container *ngIf="!isLoggedIn">
+        <ng-container *ngIf="currentUser$ | async as user; else mobileLoggedOut">
+          <a routerLink="/documents"
+             (click)="mobileMenuOpen = false"
+             class="block py-2 text-gray-600 hover:text-indigo-600 no-underline">
+            📄 Documents
+          </a>
+          <span class="block py-2 text-sm text-gray-500">👤 {{ user.username }}</span>
+          <button
+            (click)="logout()"
+            class="block py-2 text-red-600 hover:text-red-700">
+            Logout
+          </button>
+        </ng-container>
+
+        <ng-template #mobileLoggedOut>
           <a routerLink="/login"
              (click)="mobileMenuOpen = false"
              class="block py-2 text-gray-600 hover:text-indigo-600 no-underline">
@@ -75,20 +88,7 @@ import { CommonModule } from '@angular/common';
              class="block py-2 text-gray-600 hover:text-indigo-600 no-underline">
             Sign Up
           </a>
-        </ng-container>
-
-        <ng-container *ngIf="isLoggedIn">
-          <a routerLink="/documents"
-             (click)="mobileMenuOpen = false"
-             class="block py-2 text-gray-600 hover:text-indigo-600 no-underline">
-            📄 Documents
-          </a>
-          <button
-            (click)="logout()"
-            class="block py-2 text-red-600 hover:text-red-700">
-            Logout
-          </button>
-        </ng-container>
+        </ng-template>
 
       </div>
     </nav>
@@ -96,18 +96,15 @@ import { CommonModule } from '@angular/common';
   styles: []
 })
 export class NavbarComponent {
-  isLoggedIn: boolean = false;
-  username: string = '';
-  mobileMenuOpen: boolean = false;
+  mobileMenuOpen = false;
+  currentUser$;     // ← Observable, used with async pipe in template
 
-  toggleMobileMenu(): void {
-    this.mobileMenuOpen = !this.mobileMenuOpen;
+  constructor(private authService: AuthService) {
+    this.currentUser$ = this.authService.currentUser$;
   }
 
   logout(): void {
-    this.isLoggedIn = false;
-    this.username = '';
+    this.authService.logout();
     this.mobileMenuOpen = false;
-    // Later we'll add real logout logic
   }
 }

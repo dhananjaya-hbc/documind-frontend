@@ -4,6 +4,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';    // ← REAL service
 
 @Component({
   selector: 'app-login',
@@ -32,7 +33,7 @@ import { RouterLink, Router } from '@angular/router';
               type="email"
               [(ngModel)]="email"
               name="email"
-              placeholder="john@example.com"
+              placeholder="john&#64;example.com"
               class="w-full px-4 py-3 border border-gray-300 rounded-lg
                      focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500
                      outline-none transition"
@@ -78,26 +79,29 @@ import { RouterLink, Router } from '@angular/router';
   styles: []
 })
 export class LoginComponent {
-  email: string = '';
-  password: string = '';
-  errorMessage: string = '';
-  isLoading: boolean = false;
+  email = '';
+  password = '';
+  errorMessage = '';
+  isLoading = false;
 
-  constructor(private router: Router) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
   onLogin(): void {
     this.errorMessage = '';
     this.isLoading = true;
 
-    // For now, fake login (we'll connect to API later)
-    setTimeout(() => {
-      if (this.email && this.password) {
-        console.log('Login:', this.email);
-        this.router.navigate(['/documents']);
-      } else {
-        this.errorMessage = 'Please fill in all fields.';
+    // ✅ REAL API CALL (replaces the old setTimeout fake)
+    this.authService.login({
+      email: this.email,
+      password: this.password
+    }).subscribe({
+      next: () => {
+        this.router.navigate(['/documents']);   // Success → go to documents
+      },
+      error: (err) => {
+        this.errorMessage = err.error?.detail || 'Login failed. Please try again.';
+        this.isLoading = false;
       }
-      this.isLoading = false;
-    }, 1000);
+    });
   }
 }
